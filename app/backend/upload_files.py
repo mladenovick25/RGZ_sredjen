@@ -34,28 +34,28 @@ async def validate_file_mime(upload_file: UploadFile, allowed_mimes: set):
     # Check MIME type using the filetype library
     kind = filetype.guess(file_content)
     if kind is None:
-        logger.error("Could not determine the file type.", extra={"username": username_gl})
+        logger.error(f"{username_gl}: Could not determine the file type.")
         raise HTTPException(status_code=400, detail="Could not determine the file type.")
     
     mime = kind.mime
     if mime not in allowed_mimes:
-        logger.error(f"An error occurred: Unsupported file type: {mime}", exc_info=True, extra={"username": username_gl})
+        logger.error(f"{username_gl}: An error occurred: Unsupported file type: {mime}", exc_info=True)
         raise HTTPException(status_code=400, detail=f"Unsupported file type: {mime}")
     
     return file_content
 
 
-async def process_file(file: UploadFile, use_extended: bool, language_sent: str):
+async def process_file(file: UploadFile, use_extended: bool, language_sent: str, usernamemy: str):
     try:
         # Validate file MIME type
         allowed_mimes = {'application/pdf'}
         file_content = await validate_file_mime(file, allowed_mimes)
         
         file_like_object = io.BytesIO(file_content)
-        text, is_there_better, highlighted_pdf_stream = await file_to_txt(file_like_object, file.filename, use_extended, language_sent, username_gl=username_gl)
+        text, is_there_better, highlighted_pdf_stream = await file_to_txt(file_like_object, file.filename, use_extended, language_sent, usernamemy)
         return file_content, text, is_there_better, highlighted_pdf_stream
     except Exception as e:
-        logger.error(f"An error occurred: {str(e)}", exc_info=True, extra={"username": username_gl})
+        logger.error(f"{username_gl}: An error occurred: {str(e)}", exc_info=True)
         raise HTTPException(status_code=400, detail=f"PDF is invalid.")
 
 def encode_pdf(stream):
@@ -73,8 +73,9 @@ async def upload_files(language_sent: str = Form(None), file: UploadFile = File(
             language_sent = language
         
         username_gl = username
+        #print(username_gl)
 
-        file_content, text, is_there_better, highlighted_pdf_stream = await process_file(file, False, language_sent)
+        file_content, text, is_there_better, highlighted_pdf_stream = await process_file(file, False, language_sent, username_gl)
         
 
         if highlighted_pdf_stream:
@@ -118,8 +119,9 @@ async def second_upload_files(language_sent: str = Form(None), file: UploadFile 
             language_sent = language
 
         username_gl = username
+        #print(username_gl)
 
-        file_content, text, is_there_better, highlighted_pdf_stream = await process_file(file, True, language_sent)
+        file_content, text, is_there_better, highlighted_pdf_stream = await process_file(file, True, language_sent, username_gl)
         
         pdf_base64 = encode_pdf(highlighted_pdf_stream) if highlighted_pdf_stream else None
 

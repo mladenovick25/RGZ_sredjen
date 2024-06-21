@@ -17,7 +17,7 @@ handler = RotatingFileHandler('logs/application.log', maxBytes=1048576, backupCo
 handler.setLevel(logging.INFO)
 
 # Create a formatter and set it to the handler
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(username)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 
 # Add the handler to the logger

@@ -4,6 +4,7 @@ import { Document, Packer, Paragraph, TextRun } from 'docx';
 import keycloak from './keycloak';
 
 const backend_path = process.env.VUE_APP_BACKEND_PATH;
+//const backend_path = 'http://localhost:8000/api';//process.env.VUE_APP_BACKEND_PATH;
 //console.log('Route Prefix:', backend_path);
 
 export default {
@@ -207,6 +208,7 @@ export default {
       this.backActive = false;
 
       const username = keycloak.tokenParsed.preferred_username;
+      console.log(username)
 
       const formData = new FormData();
       formData.append('language_sent', this.selectedLanguage);

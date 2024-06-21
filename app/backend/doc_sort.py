@@ -25,10 +25,10 @@ async def file_to_txt(file_content, file_name, is_it_second, language, username_
                     if page_text:
                         text += page_text
         except TypeError as e:
-            logger.info(f"TypeError while processing PDF file: {file_name}. Trying second way.", extra={"username": username_gl})
+            logger.info(f"{username_gl}: TypeError while processing PDF file: {file_name}. Trying second way.")
             text = ""
         except Exception as e:
-            logger.error(f"Unexpected error while processing PDF file: {file_name}. Error: {e}", extra={"username": username_gl})
+            logger.error(f"{username_gl}: Unexpected error while processing PDF file: {file_name}. Error: {e}")
             return "", False, None  # Or handle the error differently
 
 
@@ -41,12 +41,12 @@ async def file_to_txt(file_content, file_name, is_it_second, language, username_
             current_text = text
             is_there_better = True
 
-        logger.info(f"Processed PDF file: {file_name}.", extra={"username": username_gl})
+        logger.info(f"{username_gl}: Processed PDF file: {file_name}.")
 
         return current_text, is_there_better, highlighted_pdf
     
     else:
-        logger.info(f"File: {file_name} is a bad type.", extra={"username": username_gl})
+        logger.info(f"{username_gl}: File: {file_name} is a bad type.")
 
         return "", False, None
 

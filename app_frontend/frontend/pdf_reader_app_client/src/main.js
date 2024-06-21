@@ -31,11 +31,6 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-
-/*const app = createApp(App);
-app.use(router);
-app.mount('#app');*/
-
 const app = createApp(App);
 
 keycloak.init({ onLoad: 'login-required' })
@@ -64,6 +59,18 @@ keycloak.init({ onLoad: 'login-required' })
   .catch(error => {
     console.error('Authentication Failed', error); // Log the error
   });
+
+
+
+
+
+
+
+/*const app = createApp(App);
+app.use(router);
+app.mount('#app');*/
+
+
 
 
 
