@@ -4,4 +4,4 @@ app/backend/__pycache__/
 app/backend/logs/
 app/backend/extract_page.py/
 app_frontend/frontend/pdf_reader_app_client/node_modules
-letsencrypt/
+letsencrypt/acme.jsom/
