@@ -1,0 +1,188 @@
+.file-selector {
+    width: 100vw;
+    height: 100vh;
+    /*display: flex;
+    align-items: stretch; /* Ensure both sides stretch to the same height */
+  }
+  
+  .left-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .logo {
+    width: 100%; /* Make the logo fill its container */
+    max-width: 150px; /* Limit the logo's maximum width */
+    height: auto; /* Maintain aspect ratio */
+  }
+  
+  .right-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .drop-area {
+    width: 100%; /* Make the drop area fill its container */
+    height: 90%;
+    border: 2px dashed #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+  }
+  
+  .drop-area:hover {
+    border-color: #6c63ff;
+  }
+  
+  .dragging {
+    border-color: #6c63ff;
+  }
+  
+  .drop-text {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  
+  .file-info {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+  }
+  
+  .alert-message {
+    width: 100%;
+    height: 300px;
+    flex: 1;
+    border: 2px dashed #ccc;
+    transition: border-color 0.3s ease;
+    resize: none;
+    background-color: transparent; 
+    color: black; 
+  }
+  
+  .alert-message:hover {
+    border-color: #6c63ff;
+  }
+  
+  .button-container {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .upload-button,
+  .copy-button {
+    width: 100%; /* Make the buttons fill their container */
+    max-width: 180px; /* Limit the buttons' maximum width */
+    padding: 0.5rem 1rem;
+    /*background-color: #6c63ff;*/
+    background-color: #365da8;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .upload-button:hover,
+  .copy-button:hover {
+    background-color: #5246d6;
+  }
+  
+  .copy-button[disabled] {
+    pointer-events: none;
+  }
+  
+  .upload-button {
+    margin-left: 10px;
+  }
+  
+  .upload-button + .upload-button,
+  .copy-button + .copy-button {
+    margin-left: 10px;
+  }
+
+
+  
+  /*radio buttons*/
+  .radio-buttons {
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+  }
+  
+  .radio-label {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-size: 16px;
+    user-select: none; /* prevents text selection */
+  }
+  
+  .radio-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  .radio-custom {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  input[type="radio"]:checked + .radio-custom:before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    transform: translate(-20%, -20%); /* Centers the dot */
+    width: 10px;
+    height: 10px;
+    background-color: #333;
+    border-radius: 50%;
+  }
+
+
+
+  /* Styles for loading overlay */
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #333;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }

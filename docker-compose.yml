@@ -1,0 +1,67 @@
+version: '3.8'
+services:
+  traefik:
+    image: traefik:v2.5
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedByDefault=false"
+      - "--entrypoints.web.address=:80"  # HTTP
+      - "--entrypoints.websecure.address=:443"  # HTTPS
+      - "--certificatesresolvers.mytlschallenge.acme.tlschallenge=true"  # Enable TLS-ALPN challenge
+      - "--certificatesresolvers.mytlschallenge.acme.email=kostargz@gmail.com"  # Your email
+      - "--certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json"  # Where to store certificates
+    ports:
+      - "80:80"  # The HTTP port
+      - "443:443"  # The HTTPS port
+      - "8080:8080"  # The Traefik dashboard and API
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"  # Store certificate data
+    networks:
+      - web
+
+  app:
+    build:
+      context: ./app/backend
+      args:
+        NUMBER_OF_WORKERS: 4
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`pocetna.test`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.app.entrypoints=websecure"  # Use HTTPS
+      - "traefik.http.routers.app.tls.certresolver=mytlschallenge"  # Use Let's Encrypt
+      - "traefik.http.services.app.loadbalancer.server.port=8000"
+    volumes:
+      - .:/app/backend
+    environment:
+      - NAME=World
+      - ALLOWED_ORIGINS=https://pocetna.test
+    depends_on:
+      - traefik
+    networks:
+      - web
+
+  pdf_reader_app_client:
+    build:
+      context: ./app_frontend/frontend/pdf_reader_app_client
+      args:
+        VUE_APP_BACKEND_PATH: https://pocetna.test/api
+        VUE_APP_LOGIN_PATH: http://localhost:8180
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vueapp.rule=Host(`pocetna.test`) && PathPrefix(`/app`)"
+      - "traefik.http.middlewares.vueapp-stripprefix.stripprefix.prefixes=/app"
+      - "traefik.http.routers.vueapp.middlewares=vueapp-stripprefix@docker"
+      - "traefik.http.routers.vueapp.entrypoints=websecure"  # Use HTTPS
+      - "traefik.http.routers.vueapp.tls.certresolver=mytlschallenge"  # Use Let's Encrypt
+      - "traefik.http.services.vueapp.loadbalancer.server.port=80"
+    depends_on:
+      - traefik
+    networks:
+      - web
+
+
+networks:
+  web:
+    driver: bridge
