@@ -3,18 +3,18 @@ services:
   traefik:
     image: traefik:v2.5
     command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
+      - "--api.insecure=${TRAEFIK_API_INSECURE}"
+      - "--providers.docker=${TRAEFIK_PROVIDERS_DOCKER}"
       - "--providers.docker.exposedByDefault=false"
-      - "--entrypoints.web.address=:80"  # HTTP
-      - "--entrypoints.websecure.address=:443"  # HTTPS
-      - "--certificatesresolvers.mytlschallenge.acme.tlschallenge=true"  # Enable TLS-ALPN challenge
-      - "--certificatesresolvers.mytlschallenge.acme.email=kostargz@gmail.com"  # Your email
-      - "--certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json"  # Where to store certificates
+      - "--entrypoints.web.address=${TRAEFIK_ENTRYPOINTS_WEB_ADDRESS}"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=${LETSENCRYPT_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
-      - "80:80"  # The HTTP port
-      - "443:443"  # The HTTPS port
-      - "8080:8080"  # The Traefik dashboard and API
+      - "${TRAEFIK_PORT}:80"
+      - "443:443"
+      - "${TRAEFIK_DASHBOARD_PORT}:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./letsencrypt:/letsencrypt"  # Store certificate data
@@ -22,21 +22,19 @@ services:
       - web
 
   app:
-    build:
-      context: ./app/backend
-      args:
-        NUMBER_OF_WORKERS: 4
+    image: ${PROJECT_NAME}-${BACKEND_PROJECT_NAME}:latest
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.app.rule=Host(`pocetna.test`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.app.entrypoints=websecure"  # Use HTTPS
-      - "traefik.http.routers.app.tls.certresolver=mytlschallenge"  # Use Let's Encrypt
-      - "traefik.http.services.app.loadbalancer.server.port=8000"
+      - "traefik.http.routers.${BACKEND_PROJECT_NAME}.rule=Host(`pocetna.test`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.${BACKEND_PROJECT_NAME}.entrypoints=websecure"  # Use HTTPS
+      - "traefik.http.routers.${BACKEND_PROJECT_NAME}.tls.certresolver=mytlschallenge"  # Use Let's Encrypt
+      - "traefik.http.services.${BACKEND_PROJECT_NAME}.loadbalancer.server.port=${BACKEND_PORT}"
     volumes:
       - .:/app/backend
     environment:
       - NAME=World
-      - ALLOWED_ORIGINS=https://pocetna.test
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - NUMBER_OF_WORKERS=${NUMBER_OF_WORKERS}
     depends_on:
       - traefik
     networks:
@@ -50,12 +48,12 @@ services:
         VUE_APP_LOGIN_PATH: http://localhost:8180
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.vueapp.rule=Host(`pocetna.test`) && PathPrefix(`/app`)"
-      - "traefik.http.middlewares.vueapp-stripprefix.stripprefix.prefixes=/app"
-      - "traefik.http.routers.vueapp.middlewares=vueapp-stripprefix@docker"
-      - "traefik.http.routers.vueapp.entrypoints=websecure"  # Use HTTPS
-      - "traefik.http.routers.vueapp.tls.certresolver=mytlschallenge"  # Use Let's Encrypt
-      - "traefik.http.services.vueapp.loadbalancer.server.port=80"
+      - "traefik.http.routers.${FRONTEND_PROJECT_NAME}.rule=Host(`pocetna.test`) && PathPrefix(`/app`)"
+      - "traefik.http.middlewares.${FRONTEND_PROJECT_NAME}-stripprefix.stripprefix.prefixes=/app"
+      - "traefik.http.routers.${FRONTEND_PROJECT_NAME}.middlewares=${FRONTEND_PROJECT_NAME}-stripprefix@docker"
+      - "traefik.http.routers.${FRONTEND_PROJECT_NAME}.entrypoints=websecure"  # Use HTTPS
+      - "traefik.http.routers.${FRONTEND_PROJECT_NAME}.tls.certresolver=mytlschallenge"  # Use Let's Encrypt
+      - "traefik.http.services.${FRONTEND_PROJECT_NAME}.loadbalancer.server.port=80"
     depends_on:
       - traefik
     networks:

@@ -70,9 +70,6 @@ EXPOSE 8000
 # Define environment variable
 ENV NAME World
 
-# Accept a build argument for the number of workers
-ARG NUMBER_OF_WORKERS
-ENV NUMBER_OF_WORKERS=${NUMBER_OF_WORKERS}
 
 CMD ["sh", "-c", "uvicorn upload_files:app --host 0.0.0.0 --port 8000 --workers ${NUMBER_OF_WORKERS}"]
 
