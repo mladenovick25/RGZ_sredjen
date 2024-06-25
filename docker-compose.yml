@@ -25,7 +25,7 @@ services:
     image: ${PROJECT_NAME}-${BACKEND_PROJECT_NAME}:latest
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.${BACKEND_PROJECT_NAME}.rule=Host(`pocetna.test`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.${BACKEND_PROJECT_NAME}.rule=Host(`pocetna.test`) && PathPrefix(`/api-pdf-reader`)"
       - "traefik.http.routers.${BACKEND_PROJECT_NAME}.entrypoints=websecure"  # Use HTTPS
       - "traefik.http.routers.${BACKEND_PROJECT_NAME}.tls.certresolver=mytlschallenge"  # Use Let's Encrypt
       - "traefik.http.services.${BACKEND_PROJECT_NAME}.loadbalancer.server.port=${BACKEND_PORT}"
@@ -44,7 +44,7 @@ services:
     build:
       context: ./app_frontend/frontend/pdf_reader_app_client
       args:
-        VUE_APP_BACKEND_PATH: https://pocetna.test/api
+        VUE_APP_BACKEND_PATH: https://pocetna.test/api-pdf-reader
         VUE_APP_LOGIN_PATH: http://localhost:8180
     labels:
       - "traefik.enable=true"

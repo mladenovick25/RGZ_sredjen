@@ -65,7 +65,7 @@ def encode_pdf(stream):
     
 
 
-@app.post("/api/upload/")
+@app.post("/api-pdf-reader/upload/")
 async def upload_files(language_sent: str = Form(None), file: UploadFile = File(...), username: str = Form(...)):
 
     try:
@@ -111,7 +111,7 @@ async def upload_files(language_sent: str = Form(None), file: UploadFile = File(
         raise HTTPException(status_code=400, detail=f"PDF is invalid.")'''
 
 
-@app.post("/api/second_upload/")
+@app.post("/api-pdf-reader/second_upload/")
 async def second_upload_files(language_sent: str = Form(None), file: UploadFile = File(...), username: str = Form(...)):
 
     try:
